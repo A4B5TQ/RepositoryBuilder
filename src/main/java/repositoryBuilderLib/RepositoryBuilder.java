@@ -6,6 +6,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -127,22 +128,7 @@ public class RepositoryBuilder {
                         builder.append(System.lineSeparator());
                         builder.append(REPOSITORY_ANNOTATION);
                         builder.append(System.lineSeparator());
-                        String idType = "";
-                        Method[] fields = currentClass.getDeclaredMethods();
-                        for (Method method : fields) {
-                            method.setAccessible(true);
-                            if (method.isAnnotationPresent(Id.class)) {
-                                Class type = method.getReturnType();
-                                if (type.isPrimitive()) {
-                                    type = primitivesToWrapper.get(type);
-                                }
-                                idType = type.getTypeName();
-                                int indexLastDot = idType.lastIndexOf(".");
-                                if (indexLastDot != -1) {
-                                    idType = idType.substring(indexLastDot + 1);
-                                }
-                            }
-                        }
+                        String idType = idType = getIdType(currentClass);
                         builder.append(String.format(REPOSITORY_INTERFACE_NAME, className + postfix, className, idType));
                         builder.append(System.lineSeparator());
                         builder.append(CLOSE_BRACKET);
@@ -155,5 +141,48 @@ public class RepositoryBuilder {
                 }
             }
         }
+    }
+
+    private static String getIdType(Class currentClass) {
+        String idType = "";
+        Method[] methods = currentClass.getDeclaredMethods();
+        boolean hasMethodAnnotation = false;
+
+        for (Method method : methods) {
+            method.setAccessible(true);
+            if (method.isAnnotationPresent(Id.class)) {
+                Class type = method.getReturnType();
+                if (type.isPrimitive()) {
+                    type = primitivesToWrapper.get(type);
+                }
+                idType = type.getTypeName();
+                int indexLastDot = idType.lastIndexOf(".");
+                if (indexLastDot != -1) {
+                    idType = idType.substring(indexLastDot + 1);
+                    hasMethodAnnotation = true;
+                    break;
+                }
+            }
+        }
+
+        if (!hasMethodAnnotation) {
+            Field[] fields = currentClass.getDeclaredFields();
+            for (Field field : fields) {
+                field.setAccessible(true);
+                if (field.isAnnotationPresent(Id.class)) {
+                    Class type = field.getType();
+                    if (type.isPrimitive()) {
+                        type = primitivesToWrapper.get(type);
+                    }
+                    idType = type.getTypeName();
+                    int indexLastDot = idType.lastIndexOf(".");
+                    if (indexLastDot != -1) {
+                        idType = idType.substring(indexLastDot + 1);
+                        break;
+                    }
+                }
+            }
+        }
+        return idType;
     }
 }
