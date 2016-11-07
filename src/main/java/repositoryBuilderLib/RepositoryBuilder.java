@@ -97,7 +97,7 @@ public class RepositoryBuilder {
 
     private static void createJavaFile(Map<String, Class> entityClassesMap, String repositorypostfix) {
 
-        String postfix = repositorypostfix.isEmpty() ? REPOSITORY_NAME : repositorypostfix;
+        String postfix = repositorypostfix.trim().isEmpty() ? REPOSITORY_NAME : repositorypostfix.trim();
 
         for (Map.Entry<String, Class> classEntry : entityClassesMap.entrySet()) {
             Class currentClass = classEntry.getValue();
