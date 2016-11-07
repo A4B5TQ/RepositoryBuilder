@@ -1,4 +1,4 @@
-package repositoryBuilderLib;
+package repository.builder.lib;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -129,6 +130,11 @@ public class RepositoryBuilder {
                         builder.append(REPOSITORY_ANNOTATION);
                         builder.append(System.lineSeparator());
                         String idType = idType = getIdType(currentClass);
+                        if (idType.equals("")) {
+                            writer.close();
+                            Files.delete(repoFile.toPath());
+                            continue;
+                        }
                         builder.append(String.format(REPOSITORY_INTERFACE_NAME, className + postfix, className, idType));
                         builder.append(System.lineSeparator());
                         builder.append(CLOSE_BRACKET);
