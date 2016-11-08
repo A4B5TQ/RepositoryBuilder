@@ -155,6 +155,7 @@ public class RepositoryBuilder {
     }
 
     private static String getIdType(Class currentClass) {
+        int idCounter = 0;
         String idType = "";
         Method[] methods = currentClass.getDeclaredMethods();
         boolean hasMethodAnnotation = false;
@@ -171,7 +172,7 @@ public class RepositoryBuilder {
                 if (indexLastDot != -1) {
                     idType = idType.substring(indexLastDot + 1);
                     hasMethodAnnotation = true;
-                    break;
+                    idCounter++;
                 }
             }
         }
@@ -189,12 +190,17 @@ public class RepositoryBuilder {
                     int indexLastDot = idType.lastIndexOf(".");
                     if (indexLastDot != -1) {
                         idType = idType.substring(indexLastDot + 1);
-                        break;
+                        idCounter++;
                     }
                 }
             }
         }
-        return idType;
+
+        if (idCounter == 1) {
+            return idType;
+        } else {
+            return "";
+        }
     }
 
     private static void setMainPath(Package packageSource) {
