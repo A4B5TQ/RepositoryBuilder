@@ -1,5 +1,7 @@
 package repository.builder.lib;
 
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.io.BufferedWriter;
@@ -30,6 +32,7 @@ public class RepositoryBuilder {
     private final static String OPEN_BRACKET = "{";
     private final static String PACKAGE = "package ";
     private final static String REPOSITORY_NAME = "Repository";
+    private static String MAIN_PATH = "";
 
     private static Map<String, Class> entityClasses = new HashMap<>();
     private final static Map<Class<?>, Class<?>> primitivesToWrapper = new HashMap<>();
@@ -81,6 +84,11 @@ public class RepositoryBuilder {
                     try {
                         currentClass = classLoader.loadClass((!packageName.isEmpty() ?
                                 (packageName + ".") : ("")) + className);
+
+                        if (currentClass.isAnnotationPresent(SpringBootApplication.class)) {
+                            setMainPath(currentClass.getPackage());
+                        }
+
                         if (currentClass.isAnnotationPresent(Entity.class)) {
                             if (!entityClasses.containsKey(className)) {
                                 entityClasses.put(className, currentClass);
@@ -104,46 +112,43 @@ public class RepositoryBuilder {
             Class currentClass = classEntry.getValue();
             String className = classEntry.getKey();
             Package packageName = currentClass.getPackage();
-            int dotIndex = packageName.toString().indexOf(".");
-            String mainPackage = "";
-            if (dotIndex != -1) {
-                mainPackage = packageName.toString().substring(8, dotIndex);
-                String importEntityPackage = packageName.toString().substring(8);
-                File directory = new File(SOURCE_PATH + "/" + mainPackage + "/" + REPOSITORY_DIRECTORY_NAME);
-                if (!directory.exists()) {
-                    directory.mkdir();
-                }
-                File repoFile = new File(directory.getAbsolutePath(), className + postfix + ".java");
-                if (!repoFile.exists()) {
-                    try (BufferedWriter writer = new BufferedWriter(new FileWriter(repoFile, true))) {
-                        StringBuilder builder = new StringBuilder(32);
-                        builder.append(PACKAGE + mainPackage + "." + REPOSITORY_DIRECTORY_NAME + ";");
-                        builder.append(System.lineSeparator());
-                        builder.append(System.lineSeparator());
-                        builder.append(REPOSITORY_IMPORT);
-                        builder.append(System.lineSeparator());
-                        builder.append(JPA_IMPORT);
-                        builder.append(System.lineSeparator());
-                        builder.append("import ").append(importEntityPackage).append(".").append(className).append(";");
-                        builder.append(System.lineSeparator());
-                        builder.append(System.lineSeparator());
-                        builder.append(REPOSITORY_ANNOTATION);
-                        builder.append(System.lineSeparator());
-                        String idType = idType = getIdType(currentClass);
-                        if (idType.equals("")) {
-                            writer.close();
-                            Files.delete(repoFile.toPath());
-                            continue;
-                        }
+            String importEntityPackage = packageName.toString().substring(8);
+            File directory = new File(SOURCE_PATH + "/" + MAIN_PATH + "/" + REPOSITORY_DIRECTORY_NAME);
+            if (!directory.exists()) {
+                directory.mkdir();
+            }
+            File repoFile = new File(directory.getAbsolutePath(), className + postfix + ".java");
+            if (!repoFile.exists()) {
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(repoFile, true))) {
+                    StringBuilder builder = new StringBuilder(32);
+                    builder.append(PACKAGE + MAIN_PATH.replaceAll("\\/","\\.") + "." + REPOSITORY_DIRECTORY_NAME + ";");
+                    builder.append(System.lineSeparator());
+                    builder.append(System.lineSeparator());
+                    builder.append(REPOSITORY_IMPORT);
+                    builder.append(System.lineSeparator());
+                    builder.append(JPA_IMPORT);
+                    builder.append(System.lineSeparator());
+                    builder.append("import ").append(importEntityPackage).append(".").append(className).append(";");
+                    builder.append(System.lineSeparator());
+                    builder.append(System.lineSeparator());
+                    builder.append(REPOSITORY_ANNOTATION);
+                    builder.append(System.lineSeparator());
+                    String idType = getIdType(currentClass);
+
+                    if (idType.equals("")) {
+                        writer.close();
+                        Files.delete(repoFile.toPath());
+                        continue;
+                    } else {
                         builder.append(String.format(REPOSITORY_INTERFACE_NAME, className + postfix, className, idType));
                         builder.append(System.lineSeparator());
                         builder.append(CLOSE_BRACKET);
                         writer.write(builder.toString());
                         writer.flush();
                         writer.close();
-                    } catch (IOException e) {
-                        System.out.println(e);
                     }
+                } catch (IOException e) {
+                    System.out.println(e);
                 }
             }
         }
@@ -190,5 +195,10 @@ public class RepositoryBuilder {
             }
         }
         return idType;
+    }
+
+    private static void setMainPath(Package packageSource) {
+        String packageName = packageSource.toString().substring(8);
+        MAIN_PATH = packageName.replaceAll("\\.", "/");
     }
 }
