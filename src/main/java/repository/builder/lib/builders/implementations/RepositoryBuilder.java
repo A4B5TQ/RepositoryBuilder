@@ -38,28 +38,25 @@ public class RepositoryBuilder extends AbstractBuilder {
             if (!directory.exists()) {
                 directory.mkdir();
             }
+            String repoFileName = className + postfix;
             File repoFile = new File(directory.getAbsolutePath(), className + postfix + ".java");
             if (!repoFile.exists()) {
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(repoFile, true))) {
-                    StringBuilder builder = new StringBuilder(32);
-                    builder.append(PACKAGE + MAIN_PATH.replaceAll("\\/", "\\.") + "." + REPOSITORY_DIRECTORY_NAME + ";");
-                    builder.append(System.lineSeparator());
-                    builder.append(System.lineSeparator());
-                    builder.append(REPOSITORY_IMPORT);
-                    builder.append(System.lineSeparator());
-                    builder.append(JPA_IMPORT);
-                    builder.append(System.lineSeparator());
-                    builder.append("import ").append(importEntityPackage).append(".").append(className).append(";");
-                    builder.append(System.lineSeparator());
-                    builder.append(System.lineSeparator());
-                    builder.append(REPOSITORY_ANNOTATION);
-                    builder.append(System.lineSeparator());
                     String idType = this.getIdType(currentClass);
-
-                    if (idType.equals("")) {
-                        writer.close();
-                        Files.delete(repoFile.toPath());
-                    } else {
+                    StringBuilder builder = new StringBuilder(32);
+                    if (!idType.equals("")) {
+                        builder.append(PACKAGE).append(MAIN_PATH.replaceAll("/", "\\.")).append(".").append(REPOSITORY_DIRECTORY_NAME).append(";");
+                        builder.append(System.lineSeparator());
+                        builder.append(System.lineSeparator());
+                        builder.append(REPOSITORY_IMPORT);
+                        builder.append(System.lineSeparator());
+                        builder.append(JPA_IMPORT);
+                        builder.append(System.lineSeparator());
+                        builder.append("import ").append(importEntityPackage).append(".").append(className).append(";");
+                        builder.append(System.lineSeparator());
+                        builder.append(System.lineSeparator());
+                        builder.append(REPOSITORY_ANNOTATION);
+                        builder.append(System.lineSeparator());
                         builder.append(String.format(REPOSITORY_INTERFACE_NAME, className + postfix, className, idType));
                         builder.append(System.lineSeparator());
                         //TODO implements some methods
@@ -67,9 +64,13 @@ public class RepositoryBuilder extends AbstractBuilder {
                         writer.write(builder.toString());
                         writer.flush();
                         writer.close();
+                        createdRepositories.put(className,repoFileName);
+                    } else {
+                        writer.close();
+                        Files.delete(repoFile.toPath());
                     }
                 } catch (IOException e) {
-                    System.out.println(e);
+                    e.printStackTrace();
                 }
             }
         }
@@ -129,7 +130,7 @@ public class RepositoryBuilder extends AbstractBuilder {
     }
 
     private void setRepositoryPostfix(String repositoryPostfix) {
-        if (repositoryPostfix != null){
+        if (repositoryPostfix != null) {
             this.repositoryPostfix = repositoryPostfix.trim();
         } else {
             this.repositoryPostfix = "";

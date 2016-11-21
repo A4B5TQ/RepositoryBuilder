@@ -17,7 +17,7 @@ abstract class AbstractBuilder  {
 
     final static Map<Class<?>, Class<?>> primitivesToWrapper = new HashMap<>();
     static Map<String, Class> entityClasses = new HashMap<>();
-    static Map<String,Class> repositoryClasses = new HashMap<>();
+    static Map<String,String> createdRepositories = new HashMap<>();
 
     static {
         primitivesToWrapper.put(boolean.class, Boolean.class);

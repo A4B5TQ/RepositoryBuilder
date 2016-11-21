@@ -1,9 +1,9 @@
 package repository.builder.lib.builderFactory;
 
-import repository.builder.lib.builders.interfaces.Builder;
 import repository.builder.lib.builders.implementations.BuilderImpl;
 import repository.builder.lib.builders.implementations.RepositoryBuilder;
 import repository.builder.lib.builders.implementations.ServiceBuilder;
+import repository.builder.lib.builders.interfaces.Builder;
 import repository.builder.lib.enums.BuilderStrategy;
 
 public class BuilderFactoryImpl implements BuilderFactory {

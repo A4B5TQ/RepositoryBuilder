@@ -7,5 +7,7 @@ public class Constants {
     public final static String CLOSE_BRACKET = "}";
     public final static String OPEN_BRACKET = "{";
     public final static String PACKAGE = "package ";
+    public final static String TRANSACTIONAL_ANNOTATION = "@Transactional";
+    public final static String AUTOWIRED_ANNOTATION = "\t@Autowired";
     public static String MAIN_PATH = "";
 }

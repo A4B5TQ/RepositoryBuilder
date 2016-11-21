@@ -7,6 +7,6 @@ public interface BuilderFactory {
 
    Builder createBuilder(BuilderStrategy strategy);
 
-   Builder createBuilder(String repositoryPostfix ,BuilderStrategy strategy);
+   Builder createBuilder(String repositoryPostfix, BuilderStrategy strategy);
 
 }
