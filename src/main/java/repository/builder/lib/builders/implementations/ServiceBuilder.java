@@ -1,6 +1,6 @@
 package repository.builder.lib.builders.implementations;
 
-import repository.builder.lib.constants.RepositoryConstant;
+import repository.builder.lib.constants.RepositoryConstants;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import static repository.builder.lib.constants.Constants.*;
-import static repository.builder.lib.constants.ServiceConstant.*;
+import static repository.builder.lib.constants.ServiceConstants.*;
 
 public class ServiceBuilder extends AbstractBuilder {
 
@@ -34,7 +34,7 @@ public class ServiceBuilder extends AbstractBuilder {
                 builder.append(System.lineSeparator());
                 builder.append(System.lineSeparator());
                 builder.append("import ").append(MAIN_PATH.replaceAll("/", "\\.")).append(".")
-                        .append(RepositoryConstant.REPOSITORY_DIRECTORY_NAME)
+                        .append(RepositoryConstants.REPOSITORY_DIRECTORY_NAME)
                         .append(".")
                         .append(repoName)
                         .append(";");

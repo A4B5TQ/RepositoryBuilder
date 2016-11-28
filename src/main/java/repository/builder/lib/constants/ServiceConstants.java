@@ -1,6 +1,6 @@
 package repository.builder.lib.constants;
 
-public class ServiceConstant {
+public class ServiceConstants {
 
     public final static String SERVICE_DIRECTORY_NAME = "services";
     public final static String SERVICE_ANNOTATION = "@Service";
@@ -13,6 +13,6 @@ public class ServiceConstant {
     public final static String SERVICE_NAME_IMPL = "Impl";
     public final static String SERVICE_REPOSITORY_FINAL = "\tprivate final %s %s;";
     public final static String SERVICE_CONSTRUCTOR = "\tpublic %s(%s %s) { %n" +
-            "\t %s=%s;%n" +
+            "\t\t%s = %s;%n" +
             "\t}";
 }

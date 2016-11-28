@@ -11,7 +11,7 @@ import java.nio.file.Files;
 import java.util.Map;
 
 import static repository.builder.lib.constants.Constants.*;
-import static repository.builder.lib.constants.RepositoryConstant.*;
+import static repository.builder.lib.constants.RepositoryConstants.*;
 
 public class RepositoryBuilder extends AbstractBuilder {
 

@@ -1,6 +1,6 @@
 package repository.builder.lib.constants;
 
-public class RepositoryConstant {
+public class RepositoryConstants {
 
     public final static String REPOSITORY_DIRECTORY_NAME = "repositories";
     public final static String REPOSITORY_IMPORT = "import org.springframework.stereotype.Repository;";
