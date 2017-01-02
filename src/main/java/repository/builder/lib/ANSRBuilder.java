@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import repository.builder.lib.builderFactory.BuilderFactory;
 import repository.builder.lib.builderFactory.BuilderFactoryImpl;
 import repository.builder.lib.builders.interfaces.Builder;
-import repository.builder.lib.enums.Strategy;
+import repository.builder.lib.enums.interfaces.Strategy;
 
 public class ANSRBuilder {
 

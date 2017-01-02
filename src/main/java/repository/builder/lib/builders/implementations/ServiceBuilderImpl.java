@@ -64,7 +64,11 @@ public class ServiceBuilderImpl extends AbstractBuilder {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(serviceFile, true))) {
 
                 StringBuilder builder = new StringBuilder(32);
-                builder.append(PACKAGE).append(MAIN_PATH.replaceAll("/", "\\.")).append(".").append(SERVICE_DIRECTORY_NAME).append(".").append(serviceClassDirectoryName).append(";");
+                builder.append(PACKAGE)
+                        .append(MAIN_PATH.replaceAll("/", "\\."))
+                        .append(".").append(SERVICE_DIRECTORY_NAME)
+                        .append(".").append(serviceClassDirectoryName)
+                        .append(";");
                 builder.append(System.lineSeparator());
                 builder.append(System.lineSeparator());
                 builder.append("import ").append(MAIN_PATH.replaceAll("/", "\\.")).append(".")

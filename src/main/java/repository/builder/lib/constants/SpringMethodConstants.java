@@ -6,10 +6,9 @@ package repository.builder.lib.constants;
  */
 public class SpringMethodConstants {
 
-    public final static String FIND_BY = "findBy";
+    public final static String FIND_BY = "findAllBy";
     public final static String FIND = "find";
     public final static String BY = "By";
-
     public final static String AND = "And";
     public final static String OR = "Or";
     public final static String IS = "Is";

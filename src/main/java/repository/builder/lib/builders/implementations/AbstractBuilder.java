@@ -4,6 +4,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.persistence.Entity;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
