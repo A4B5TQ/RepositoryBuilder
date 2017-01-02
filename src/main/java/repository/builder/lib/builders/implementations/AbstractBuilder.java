@@ -13,11 +13,11 @@ import java.util.Map;
 import static repository.builder.lib.constants.Constants.MAIN_PATH;
 import static repository.builder.lib.constants.Constants.SOURCE_PATH;
 
-abstract class AbstractBuilder  {
+abstract class AbstractBuilder {
 
     final static Map<Class<?>, Class<?>> primitivesToWrapper = new HashMap<>();
     static Map<String, Class> entityClasses = new HashMap<>();
-    static Map<String,String> createdRepositories = new HashMap<>();
+    static Map<String, String> createdRepositories = new HashMap<>();
 
     static {
         primitivesToWrapper.put(boolean.class, Boolean.class);
@@ -28,11 +28,12 @@ abstract class AbstractBuilder  {
         primitivesToWrapper.put(long.class, Long.class);
         primitivesToWrapper.put(float.class, Float.class);
         primitivesToWrapper.put(double.class, Double.class);
-        entityClasses = getEntityFilesRecursive(new File(SOURCE_PATH), "");
+        entityClasses = getEntityFilesRecursive(new File(SOURCE_PATH), MAIN_PATH);
     }
 
     protected abstract void build();
 
+    @SuppressWarnings("ConstantConditions")
     private static Map<String, Class> getEntityFilesRecursive(File pFile, String packageName) {
 
         for (File file : pFile.listFiles()) {
@@ -55,7 +56,7 @@ abstract class AbstractBuilder  {
                     Class currentClass = null;
                     try {
                         currentClass = classLoader.loadClass((!packageName.isEmpty() ?
-                                (packageName + ".") : ("")) + className);
+                                (packageName + ".") : (MAIN_PATH)) + className);
 
                         if (currentClass.isAnnotationPresent(SpringBootApplication.class)) {
                             setMainPath(currentClass.getPackage());

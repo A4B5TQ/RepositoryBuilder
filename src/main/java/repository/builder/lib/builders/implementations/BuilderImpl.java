@@ -5,9 +5,9 @@ import repository.builder.lib.builders.interfaces.Builder;
 public class BuilderImpl implements Builder {
 
     private RepositoryBuilder repositoryBuilder;
-    private ServiceBuilder serviceBuilder;
+    private ServiceBuilderImpl serviceBuilder;
 
-    public BuilderImpl(RepositoryBuilder repositoryBuilder, ServiceBuilder serviceBuilder) {
+    public BuilderImpl(RepositoryBuilder repositoryBuilder, ServiceBuilderImpl serviceBuilder) {
         this.repositoryBuilder = repositoryBuilder;
         this.serviceBuilder = serviceBuilder;
     }

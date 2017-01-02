@@ -4,9 +4,11 @@ package repository.builder.lib.constants;
  * Keywords inside method names
  * for creating a query using the JPA criteria API.
  */
-public class MethodConstants {
+public class SpringMethodConstants {
 
     public final static String FIND_BY = "findBy";
+    public final static String FIND = "find";
+    public final static String BY = "By";
 
     public final static String AND = "And";
     public final static String OR = "Or";
@@ -35,7 +37,4 @@ public class MethodConstants {
     public final static String FALSE = "False";
     public final static String IGNORE_CASE = "IgnoreCase";
 
-    public final static String METHOD_SUFFIX_COLLECTION_PARAM = "(Collection<%s> %s);";
-    public final static String METHOD_SUFFIX_TYPE_PARAM = "(%s %s);";
-    public final static String METHOD_SUFFIX_WITHOUT_PARAM = "();";
 }

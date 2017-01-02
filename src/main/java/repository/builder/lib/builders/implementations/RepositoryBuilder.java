@@ -25,6 +25,7 @@ public class RepositoryBuilder extends AbstractBuilder {
         this.createRepositoryJavaFile(entityClasses);
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void createRepositoryJavaFile(Map<String, Class> entityClassesMap) {
 
         String postfix = this.getRepositoryPostfix().isEmpty() ? REPOSITORY_NAME : this.getRepositoryPostfix();

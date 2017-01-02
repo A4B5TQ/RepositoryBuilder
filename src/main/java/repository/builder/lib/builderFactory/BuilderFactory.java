@@ -1,12 +1,10 @@
 package repository.builder.lib.builderFactory;
 
 import repository.builder.lib.builders.interfaces.Builder;
-import repository.builder.lib.enums.BuilderStrategy;
+import repository.builder.lib.enums.Strategy;
 
 public interface BuilderFactory {
 
-   Builder createBuilder(BuilderStrategy strategy);
-
-   Builder createBuilder(String repositoryPostfix, BuilderStrategy strategy);
+   Builder createBuilder(String repositoryPostfix, Strategy strategy);
 
 }

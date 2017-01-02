@@ -9,5 +9,8 @@ public class Constants {
     public final static String PACKAGE = "package ";
     public final static String TRANSACTIONAL_ANNOTATION = "@Transactional";
     public final static String AUTOWIRED_ANNOTATION = "\t@Autowired";
+    public final static String METHOD_SUFFIX_COLLECTION_PARAM = "(Collection<%s> %s);";
+    public final static String METHOD_SUFFIX_TYPE_PARAM = "(%s %s);";
+    public final static String METHOD_SUFFIX_WITHOUT_PARAM = "();";
     public static String MAIN_PATH = "";
 }

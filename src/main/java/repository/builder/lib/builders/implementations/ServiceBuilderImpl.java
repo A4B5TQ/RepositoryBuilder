@@ -11,15 +11,49 @@ import java.util.Map;
 import static repository.builder.lib.constants.Constants.*;
 import static repository.builder.lib.constants.ServiceConstants.*;
 
-public class ServiceBuilder extends AbstractBuilder {
+public class ServiceBuilderImpl extends AbstractBuilder {
 
     private String serviceClassDirectoryName;
 
-    public ServiceBuilder() {
+    public ServiceBuilderImpl() {
     }
 
     public void build() {
         this.createServiceInterfaceJavaFile(createdRepositories);
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private void createServiceInterfaceJavaFile(Map<String, String> repositoriesMap) {
+        for (Map.Entry<String, String> classEntry : repositoriesMap.entrySet()) {
+            String className = classEntry.getKey();
+            this.serviceClassDirectoryName = className.replace(className.charAt(0), Character.toLowerCase(className.charAt(0)));
+            File directory = new File(SOURCE_PATH + "/" + MAIN_PATH + "/" + SERVICE_DIRECTORY_NAME + "/" + serviceClassDirectoryName);
+            if (!directory.exists()) {
+                directory.mkdirs();
+            }
+            String serviceFileName = className + SERVICE_NAME;
+            File serviceFile = new File(directory.getAbsolutePath(), serviceFileName + ".java");
+            if (!serviceFile.exists()) {
+
+                try (BufferedWriter writer = new BufferedWriter(new FileWriter(serviceFile, true))) {
+
+                    StringBuilder builder = new StringBuilder(32);
+
+                    builder.append(PACKAGE).append(MAIN_PATH.replaceAll("/", "\\.")).append(".").append(SERVICE_DIRECTORY_NAME).append(".").append(serviceClassDirectoryName).append(";");
+                    builder.append(System.lineSeparator());
+                    builder.append(System.lineSeparator());
+                    builder.append(String.format(SERVICE_INTERFACE_NAME, serviceFileName));
+                    builder.append(System.lineSeparator());
+                    builder.append(CLOSE_BRACKET);
+                    writer.write(builder.toString());
+                    writer.flush();
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                this.createServiceJavaFile(serviceFileName, directory.getAbsoluteFile().toString(),classEntry.getValue());
+            }
+        }
     }
 
     private void createServiceJavaFile(String serviceInterfaceFileName, String directoryAbsolutePath,String repoName) {
@@ -66,39 +100,6 @@ public class ServiceBuilder extends AbstractBuilder {
                 e.printStackTrace();
             }
 
-        }
-    }
-
-    private void createServiceInterfaceJavaFile(Map<String, String> repositoriesMap) {
-        for (Map.Entry<String, String> classEntry : repositoriesMap.entrySet()) {
-            String className = classEntry.getKey();
-            this.serviceClassDirectoryName = className.replace(className.charAt(0), Character.toLowerCase(className.charAt(0)));
-            File directory = new File(SOURCE_PATH + "/" + MAIN_PATH + "/" + SERVICE_DIRECTORY_NAME + "/" + serviceClassDirectoryName);
-            if (!directory.exists()) {
-                directory.mkdirs();
-            }
-            String serviceFileName = className + SERVICE_NAME;
-            File serviceFile = new File(directory.getAbsolutePath(), serviceFileName + ".java");
-            if (!serviceFile.exists()) {
-
-                try (BufferedWriter writer = new BufferedWriter(new FileWriter(serviceFile, true))) {
-
-                    StringBuilder builder = new StringBuilder(32);
-
-                    builder.append(PACKAGE).append(MAIN_PATH.replaceAll("/", "\\.")).append(".").append(SERVICE_DIRECTORY_NAME).append(".").append(serviceClassDirectoryName).append(";");
-                    builder.append(System.lineSeparator());
-                    builder.append(System.lineSeparator());
-                    builder.append(String.format(SERVICE_INTERFACE_NAME, serviceFileName));
-                    builder.append(System.lineSeparator());
-                    builder.append(CLOSE_BRACKET);
-                    writer.write(builder.toString());
-                    writer.flush();
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                this.createServiceJavaFile(serviceFileName, directory.getAbsoluteFile().toString(),classEntry.getValue());
-            }
         }
     }
 }
