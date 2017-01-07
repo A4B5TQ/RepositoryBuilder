@@ -1,9 +1,5 @@
 package repository.builder.lib.builders.implementations;
 
-import org.springframework.util.StringUtils;
-import repository.builder.lib.annotations.Order;
-import repository.builder.lib.annotations.OrderingBy;
-
 import javax.persistence.Id;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,17 +8,15 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import static repository.builder.lib.constants.Constants.*;
 import static repository.builder.lib.constants.RepositoryConstants.*;
-import static repository.builder.lib.constants.SpringMethodConstants.FIND_BY;
-import static repository.builder.lib.constants.SpringMethodConstants.ORDER_BY;
 
 public class RepositoryBuilder extends AbstractBuilder {
 
-    private Map<String, Map<String, Field>> fieldNameAndType = new HashMap<>();
     private String repositoryPostfix;
     private Boolean withMethods;
 
@@ -52,7 +46,7 @@ public class RepositoryBuilder extends AbstractBuilder {
             String repoFileName = className + postfix;
             File repoFile = new File(directory.getAbsolutePath(), className + postfix + ".java");
             if (!repoFile.exists()) {
-                this.getFieldNameAndType(currentClass);
+                RepositoryMethod repoMethod = new RepositoryMethod(currentClass);
                 try (BufferedWriter writer = new BufferedWriter(new FileWriter(repoFile, true))) {
                     String idType = this.getIdType(currentClass);
                     StringBuilder builder = new StringBuilder(32);
@@ -73,8 +67,9 @@ public class RepositoryBuilder extends AbstractBuilder {
                         builder.append(System.lineSeparator());
                         builder.append(System.lineSeparator());
                         if (this.getWithMethods()) {
-                            builder.append(this.createFindByMethods(className));
-                            builder.append(this.createOrderByMethods(className));
+
+                            //builder.append(this.createFindByMethods(className));
+//                            builder.append(orderBy.createOrderByMethods(className));
                         }
                         builder.append(System.lineSeparator());
                         builder.append(CLOSE_BRACKET);
@@ -82,11 +77,11 @@ public class RepositoryBuilder extends AbstractBuilder {
                         writer.flush();
                         writer.close();
                         createdRepositories.put(className, repoFileName);
-                        this.fieldNameAndType.clear();
+                        repoMethod.setFieldNameAndType(new HashMap<>());
                     } else {
                         writer.close();
                         Files.delete(repoFile.toPath());
-                        this.fieldNameAndType.clear();
+                        repoMethod.setFieldNameAndType(new HashMap<>());
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -164,76 +159,8 @@ public class RepositoryBuilder extends AbstractBuilder {
         }
     }
 
-    private void getFieldNameAndType(Class currentClass) {
-        Field[] fields = currentClass.getDeclaredFields();
-
-        for (Field field : fields) {
-            field.setAccessible(true);
-
-            String name = field.getName();
-            Class<?> type = field.getType();
-
-            if (type.isPrimitive()) {
-                type = primitivesToWrapper.get(type);
-                Map<String, Field> typeAndField = new HashMap<>();
-                typeAndField.put(type.getSimpleName(), field);
-                this.fieldNameAndType.put(name, typeAndField);
-            }
-//            } else if (!Collection.class.isAssignableFrom(type)) {
-//                fieldNameAndType.put(name, type.getSimpleName());
-//            }
-        }
+    private Collection<RepositoryMethod> scanAnnotation(Class clazz) {
+        return null;
     }
 
-    private String createFindByMethods(String clazzType) {
-        StringBuilder builder = new StringBuilder(this.fieldNameAndType.size() * 3);
-        for (Map.Entry<String, Map<String, Field>> fieldAndName : this.fieldNameAndType.entrySet()) {
-            for (Map.Entry<String, Field> typeAndField : fieldAndName.getValue().entrySet()) {
-                builder.append(String.format(COLLECTION_RETURN_TYPE, clazzType));
-                builder.append(" ")
-                        .append(FIND_BY)
-                        .append(StringUtils.capitalize(fieldAndName.getKey()))
-                        .append(String.format(METHOD_SUFFIX_TYPE_PARAM,
-                                typeAndField.getKey(), fieldAndName.getKey()));
-                builder.append(System.lineSeparator());
-                builder.append(System.lineSeparator());
-            }
-        }
-        return builder.toString();
-    }
-
-    private String createOrderByMethods(String clazzType) {
-        StringBuilder builder = new StringBuilder(this.fieldNameAndType.size() * 3);
-        for (Map.Entry<String, Map<String, Field>> fieldAndName : this.fieldNameAndType.entrySet()) {
-            for (Map.Entry<String, Field> typeAndField : fieldAndName.getValue().entrySet()) {
-                Field field = typeAndField.getValue();
-                if (field.isAnnotationPresent(Order.class)) {
-                    builder.append(String.format(COLLECTION_RETURN_TYPE, clazzType));
-                    Order order = field.getAnnotation(Order.class);
-                    builder.append(" ")
-                            .append(FIND_BY)
-                            .append(StringUtils.capitalize(fieldAndName.getKey()))
-                            .append(ORDER_BY);
-
-                    for (OrderingBy orderBy : order.orderBy()) {
-                        builder.append(StringUtils.capitalize(orderBy.name()));
-                        switch (orderBy.type()) {
-                            case ASC:
-                                builder.append("Asc");
-                                break;
-                            case DESC:
-                                builder.append("Desc");
-                                break;
-                        }
-                    }
-                    builder.append(String.format(METHOD_SUFFIX_TYPE_PARAM,
-                            typeAndField.getKey(), fieldAndName.getKey()));
-                    builder.append(System.lineSeparator());
-                    builder.append(System.lineSeparator());
-                }
-
-            }
-        }
-        return builder.toString();
-    }
 }

@@ -1,4 +1,4 @@
-package repository.builder.lib.annotations;
+package repository.builder.lib.annotations.order;
 
 import repository.builder.lib.enums.OrderBy;
 
